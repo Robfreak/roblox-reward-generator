@@ -1,0 +1,57 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background-image: url('assets/background.jpg');
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  color: white;
+  text-align: center;
+}
+
+.container {
+  padding: 50px;
+  background-color: rgba(0, 0, 0, 0.6);
+  margin: 50px auto;
+  max-width: 400px;
+  border-radius: 15px;
+}
+
+.avatar {
+  width: 100px;
+  border-radius: 50%;
+  margin: 10px auto;
+}
+
+input {
+  padding: 10px;
+  width: 90%;
+  border: none;
+  margin: 10px 0;
+  border-radius: 10px;
+}
+
+#progressContainer {
+  background: #333;
+  border-radius: 10px;
+  margin-top: 20px;
+  overflow: hidden;
+  height: 30px;
+}
+
+#progressBar {
+  height: 30px;
+  background: limegreen;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+#claimBtn {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin-top: 20px;
+  background-color: #ffcc00;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
