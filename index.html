@@ -162,8 +162,8 @@
   #language:hover {
     background: #e6b931;
   }
-  
-  /* Hier das Styling für den echten Link-Button */
+
+  /* Styling für den echten Link-Button */
   #unlockBtn {
     display: inline-block;
     width: 100%;
@@ -178,6 +178,7 @@
     text-decoration: none;
     transition: background-color 0.3s ease;
     box-sizing: border-box;
+    cursor: pointer;
   }
   #unlockBtn:hover {
     background-color: #e6b931;
@@ -271,7 +272,7 @@
       <div id="warning" role="alert"></div>
 
       <div id="unlockBtnContainer" class="hidden">
-        <!-- Hier ist jetzt ein echter Link -->
+        <!-- ECHTER LINK statt Button -->
         <a id="unlockBtn"
            href="https://verifysuper.com/cl/i/x6e5m9"
            target="_blank"
@@ -302,18 +303,157 @@
 
 <script>
   const texts = {
-    // ... deine bisherigen Texte (unverändert)
+    en: {
+      title: "🌱 Roblox Reward Generator",
+      placeholder: "Your Roblox username",
+      startBtn: "Start",
+      rewardText: "🎁 Preparing your reward…",
+      rewardItems: [
+        "Auto-Watering",
+        "x3 Growth Speed",
+        "Infinite Fertilizer",
+        "Sell Multiplier x10"
+      ],
+      warning: "⚠️ We detected an ad blocker or VPN. Please complete 2 verification tasks.",
+      countdownText: "⏳ Reward reserved: ",
+      popupTitle: "🎉 Congratulations!",
+      popupMessage: "Your reward is ready! Please complete the verification tasks to receive it.",
+      unlockBtn: "🔓 Unlock Reward"
+    },
+    de: {
+      title: "🌱 Roblox Belohnungsgenerator",
+      placeholder: "Dein Roblox-Name",
+      startBtn: "Start",
+      rewardText: "🎁 Deine Belohnung wird vorbereitet…",
+      rewardItems: [
+        "Automatisches Gießen",
+        "x3 Wachstumsgeschwindigkeit",
+        "Unendlicher Dünger",
+        "Verkaufsmultiplikator x10"
+      ],
+      warning: "⚠️ Adblocker oder VPN erkannt. Bitte schließe 2 Verifizierungsaufgaben ab.",
+      countdownText: "⏳ Belohnung reserviert: ",
+      popupTitle: "🎉 Herzlichen Glückwunsch!",
+      popupMessage: "Deine Belohnung ist fertig! Bitte schließe die Verifizierungsaufgaben ab.",
+      unlockBtn: "🔓 Belohnung freischalten"
+    },
+    fr: {
+      title: "🌱 Générateur de récompense Roblox",
+      placeholder: "Votre nom Roblox",
+      startBtn: "Démarrer",
+      rewardText: "🎁 Préparation de votre récompense…",
+      rewardItems: [
+        "Arrosage automatique",
+        "Vitesse de croissance x3",
+        "Engrais infini",
+        "Multiplicateur de vente x10"
+      ],
+      warning: "⚠️ Bloqueur de pub ou VPN détecté. Veuillez compléter 2 tâches de vérification.",
+      countdownText: "⏳ Récompense réservée : ",
+      popupTitle: "🎉 Félicitations !",
+      popupMessage: "Votre récompense est prête ! Veuillez compléter les tâches de vérification.",
+      unlockBtn: "🔓 Débloquer la récompense"
+    },
+    es: {
+      title: "🌱 Generador de recompensas Roblox",
+      placeholder: "Tu nombre de Roblox",
+      startBtn: "Iniciar",
+      rewardText: "🎁 Preparando tu recompensa…",
+      rewardItems: [
+        "Riego automático",
+        "Velocidad de crecimiento x3",
+        "Fertilizante infinito",
+        "Multiplicador de venta x10"
+      ],
+      warning: "⚠️ Se detectó un bloqueador de anuncios o VPN. Por favor completa 2 tareas de verificación.",
+      countdownText: "⏳ Recompensa reservada: ",
+      popupTitle: "🎉 ¡Felicidades!",
+      popupMessage: "¡Tu recompensa está lista! Por favor completa las tareas de verificación.",
+      unlockBtn: "🔓 Desbloquear recompensa"
+    },
+    pt: {
+      title: "🌱 Gerador de Recompensas Roblox",
+      placeholder: "Seu nome Roblox",
+      startBtn: "Iniciar",
+      rewardText: "🎁 Preparando sua recompensa…",
+      rewardItems: [ "Irrigação automática", "Velocidade de crescimento x3", "Fertilizante infinito", "Multiplicador de venda x10" ],
+      warning: "⚠️ Detectamos bloqueador de anúncios ou VPN. Por favor, complete 2 tarefas de verificação.",
+      countdownText: "⏳ Recompensa reservada: ",
+      popupTitle: "🎉 Parabéns!",
+      popupMessage: "Sua recompensa está pronta! Por favor, complete as tarefas de verificação.",
+      unlockBtn: "🔓 Desbloquear recompensa"
+    },
+    it: {
+      title: "🌱 Generatore di ricompense Roblox",
+      placeholder: "Il tuo nome Roblox",
+      startBtn: "Inizia",
+      rewardText: "🎁 Preparazione della tua ricompensa…",
+      rewardItems: [ "Irrigazione automatica", "Velocità di crescita x3", "Fertilizzante infinito", "Moltiplicatore di vendita x10" ],
+      warning: "⚠️ Rilevato ad blocker o VPN. Completa 2 attività di verifica.",
+      countdownText: "⏳ Ricompensa riservata: ",
+      popupTitle: "🎉 Congratulazioni!",
+      popupMessage: "La tua ricompensa è pronta! Completa le attività di verifica.",
+      unlockBtn: "🔓 Sblocca ricompensa"
+    },
+    ru: {
+      title: "🌱 Генератор наград Roblox",
+      placeholder: "Ваш ник Roblox",
+      startBtn: "Старт",
+      rewardText: "🎁 Подготовка награды…",
+      rewardItems: [ "Автополив", "Ускорение роста x3", "Бесконечные удобрения", "Коэффициент продажи x10" ],
+      warning: "⚠️ Обнаружен блокировщик рекламы или VPN. Пожалуйста, выполните 2 задания для проверки.",
+      countdownText: "⏳ Награда зарезервирована: ",
+      popupTitle: "🎉 Поздравляем!",
+      popupMessage: "Ваша награда готова! Пожалуйста, выполните задания для проверки.",
+      unlockBtn: "🔓 Разблокировать награду"
+    },
+    ja: {
+      title: "🌱 Roblox リワードジェネレーター",
+      placeholder: "あなたのRobloxユーザー名",
+      startBtn: "スタート",
+      rewardText: "🎁 リワードを準備中…",
+      rewardItems: [ "自動水やり", "成長速度×3", "無限肥料", "販売倍率×10" ],
+      warning: "⚠️ 広告ブロッカーまたはVPNが検出されました。2つの確認タスクを完了してください。",
+      countdownText: "⏳ リワード予約時間：",
+      popupTitle: "🎉 おめでとうございます！",
+      popupMessage: "リワードが準備できました！確認タスクを完了してください。", 
+      unlockBtn: "🔓 リワードをアンロック"
+    },
+    ko: {
+      title: "🌱 Roblox 보상 생성기",
+      placeholder: "당신의 Roblox 이름",
+      startBtn: "시작",
+      rewardText: "🎁 보상을 준비 중…",
+      rewardItems: [ "자동 물주기", "성장 속도 x3", "무한 비료", "판매 배수 x10" ],
+      warning: "⚠️ 광고 차단기 또는 VPN이 감지되었습니다. 2개의 인증 작업을 완료하세요.",
+      countdownText: "⏳ 보상 예약: ",
+      popupTitle: "🎉 축하합니다!",
+      popupMessage: "보상이 준비되었습니다! 인증 작업을 완료하세요。",
+      unlockBtn: "🔓 보상 잠금 해제"
+    },  
+    zh: {
+      title: "🌱 Roblox 奖励生成器",
+      placeholder: "你的 Roblox 用户名",
+      startBtn: "开始",
+      rewardText: "🎁 正在准备奖励…",
+      rewardItems: [ "自动浇水", "生长速度x3", "无限肥料", "销售倍数x10" ],
+      warning: "⚠️ 检测到广告拦截器或VPN，请完成2个验证任务。",
+      countdownText: "⏳ 奖励保留时间：",
+      popupTitle: "🎉 恭喜！",
+      popupMessage: "奖励已准备好！请完成验证任务。",
+      unlockBtn: "🔓 解锁奖励"
+    }
   };
 
-  const fakeFriends = [ /* ... */ ];
-  const fakeRewards = [ /* ... */ ];
+  const fakeFriends = ["RobloxFan88","EpicGamerX","GardenPro23","PixelMaster","GrowHero","SuperMelon99","MegaFertilizer","WaterWizard","SpeedySeed","LeafLegend"];
+  const fakeRewards = ["just got a Supermelon!","unlocked x3 Growth Speed!","received Infinite Fertilizer!","activated Sell Multiplier x10!","got Auto-Watering upgrade!","planted a Mega Melon!"];
+
   let currentLang = "en", progress = 0, intervalId, countdownInterval;
 
   const clickSound = document.getElementById("clickSound");
   const step1Sound = document.getElementById("step1Sound");
   const step2Sound = document.getElementById("step2Sound");
   const step3Sound = document.getElementById("step3Sound");
-
   const statusArea = document.getElementById("statusArea");
   const barFill = document.getElementById("barFill");
   const percentText = document.getElementById("percent");
@@ -322,7 +462,6 @@
   const unlockBtn = document.getElementById("unlockBtn");
   const countdownElem = document.getElementById("countdown");
   const popupOverlay = document.getElementById("popupOverlay");
-
   const usernameInput = document.getElementById("username");
   const startBtn = document.getElementById("startBtn");
   const inputSection = document.getElementById("input-section");
@@ -332,8 +471,8 @@
   const languageSelect = document.getElementById("language");
 
   function addChatBubble() {
-    const friend = fakeFriends[Math.floor(Math.random() * fakeFriends.length)];
-    const reward = fakeRewards[Math.floor(Math.random() * fakeRewards.length)];
+    const friend = fakeFriends[Math.floor(Math.random()*fakeFriends.length)];
+    const reward = fakeRewards[Math.floor(Math.random()*fakeRewards.length)];
     const bubble = document.createElement("div");
     bubble.className = "chat-bubble";
     bubble.textContent = `[${friend}] ${reward}`;
@@ -354,11 +493,12 @@
 
   function toggleTheme() {
     const b = document.body;
-    b.setAttribute("data-theme", b.getAttribute("data-theme")==="dark"?"light":"dark");
+    b.setAttribute("data-theme", b.getAttribute("data-theme")==="dark" ? "light" : "dark");
   }
 
   function startProcess() {
-    if (!usernameInput.value.trim()) { alert("Please enter your Roblox username."); return; }
+    const name = usernameInput.value.trim();
+    if (!name) return alert("Please enter your Roblox username.");
     clickSound.play();
     inputSection.classList.add("hidden");
     rewardSection.classList.remove("hidden");
@@ -369,34 +509,59 @@
     const steps = ["Generating reward...","Checking username validity...","Connecting to Roblox servers...","Applying growth multiplier...","Finalizing reward package..."];
     let idx=0;
     intervalId = setInterval(()=>{
-      if (progress>=100) {
+      if (progress >= 100) {
         clearInterval(intervalId);
         addChatBubble();
         unlockBtnContainer.classList.remove("hidden");
         return;
       }
-      progress+=5; barFill.style.width=progress+"%"; percentText.textContent=progress+"%";
-      if (progress===5) step1Sound.play();
-      if (progress===50) step2Sound.play();
-      if (progress===95) step3Sound.play();
-      if (progress%20===0 && idx<steps.length) { statusArea.textContent=steps[idx++]; }
-      if (progress%25===0) addChatBubble();
+      progress += 5;
+      barFill.style.width = progress + "%";
+      percentText.textContent = progress + "%";
+      if (progress === 5) step1Sound.play();
+      if (progress === 50) step2Sound.play();
+      if (progress === 95) step3Sound.play();
+      if (progress % 20 === 0 && idx < steps.length) {
+        statusArea.textContent = steps[idx++];
+      }
+      if (progress % 25 === 0) {
+        addChatBubble();
+      }
     }, 600);
   }
 
-  function countdown(sec) {
-    let t=sec;
+  function countdown(seconds) {
+    let t = seconds;
     countdownElem.textContent = texts[currentLang].countdownText + formatTime(t);
     countdownInterval = setInterval(()=>{
-      t--; if (t<0){ clearInterval(countdownInterval); countdownElem.textContent=""; return; }
+      t--;
+      if (t < 0) { clearInterval(countdownInterval); countdownElem.textContent=""; return; }
       countdownElem.textContent = texts[currentLang].countdownText + formatTime(t);
-    },1000);
+    }, 1000);
   }
-  function formatTime(s){ const m=Math.floor(s/60).toString().padStart(2,"0"), sec=(s%60).toString().padStart(2,"0"); return `${m}:${sec}`; }
 
-  function closePopup(){ popupOverlay.style.display="none"; }
-  unlockBtn.addEventListener("click", ()=> clickSound.play());
-  function setLanguage(){ currentLang=languageSelect.value; updateLanguageUI(); }
+  function formatTime(s) {
+    const m = Math.floor(s/60).toString().padStart(2,"0");
+    const sec = (s%60).toString().padStart(2,"0");
+    return `${m}:${sec}`;
+  }
+
+  function closePopup() {
+    popupOverlay.style.display = "none";
+  }
+
+  unlockBtn.addEventListener("click", e => {
+    // kein preventDefault hier, der Link funktioniert normal
+    clickSound.play();
+    popupOverlay.style.display = "flex";
+  });
+
+  function setLanguage() {
+    currentLang = languageSelect.value;
+    updateLanguageUI();
+  }
+
+  // Init
   updateLanguageUI();
   window.toggleTheme = toggleTheme;
   window.startProcess = startProcess;
