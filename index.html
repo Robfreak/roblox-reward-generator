@@ -1,20 +1,407 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Test Unlock Button</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grow a Garden – Roblox Reward Generator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+  :root {
+    --text: #ffffff;
+    --box: rgba(0,0,0,0.7);
+  }
+  body[data-theme="dark"] {
+    --text: #ffffff;
+    --box: rgba(0,0,0,0.7);
+    background-color: #121212;
+  }
+  body {
+    margin:0; font-family:'Fredoka One', cursive;
+    background: url('https://imgs.search.brave.com/cdG__lFri3TgWSDrC071Y7RUVXNuzifLsXb80lWx1Bk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/cGNnYW1lc24uY29t/L3dwLWNvbnRlbnQv/c2l0ZXMvcGNnYW1l/c24vMjAyNS8wNi9n/cm93LWEtZ2FyZGVu/LXdpa2ktYnV5LXBj/Z2FtZXNuLTU1MHgz/MDkuanBn') no-repeat center center fixed;
+    background-size: cover;
+    color: var(--text);
+    overflow-x:hidden;
+  }
+  .container {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .box {
+    background-color: var(--box);
+    border-radius: 20px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  }
+  h1 {
+    text-align:center;
+    font-size: 26px;
+  }
+  .avatar-preview {
+    text-align:center;
+    margin-bottom: 10px;
+  }
+  .avatar-preview img {
+    width: 110px;
+    border-radius: 12px;
+    pointer-events: none;
+    user-select: none;
+  }
+  input, button, select {
+    width: 100%;
+    padding: 14px;
+    margin-top: 14px;
+    font-size: 17px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background-color: #f9c349;
+    color: black;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:disabled {
+    background-color: #c2b844;
+    cursor: not-allowed;
+  }
+  .hidden {
+    display: none;
+  }
+  .toggle {
+    cursor: pointer;
+    padding: 6px 14px;
+    background: #c9eac5;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    user-select: none;
+    font-weight: 700;
+    width: fit-content;
+  }
+  .reward-box ul {
+    padding-left: 20px;
+  }
+  .loader .bar {
+    width: 100%;
+    background-color: #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .bar-fill {
+    height: 18px;
+    width: 0%;
+    background-color: #4caf50;
+    transition: width 0.4s;
+  }
+  .chat-bubble {
+    background: #fff;
+    color: #000;
+    padding: 9px 15px;
+    border-radius: 24px;
+    margin-top: 10px;
+    width: fit-content;
+    max-width: 92%;
+    font-size: 15px;
+    animation: slideIn 0.35s ease-out;
+    user-select: none;
+  }
+  @keyframes slideIn {
+    from {opacity: 0; transform: translateX(-25px);}
+    to {opacity: 1; transform: translateX(0);}
+  }
+  #statusArea {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 15px;
+    max-height: 180px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #f9c349 transparent;
+  }
+  #statusArea::-webkit-scrollbar {
+    width: 6px;
+  }
+  #statusArea::-webkit-scrollbar-thumb {
+    background-color: #f9c349;
+    border-radius: 10px;
+  }
+  #warning {
+    background: #ffe6e6;
+    color: #a94442;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 25px;
+    display: none;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .timer {
+    text-align: center;
+    margin-top: 24px;
+    font-weight: 700;
+    font-size: 19px;
+    user-select: none;
+  }
+  #language {
+    border-radius: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 8px 12px;
+    font-size: 16px;
+    margin-bottom: 22px;
+    background: #f9c349;
+    color: #111;
+    box-shadow: 0 3px 8px rgb(249 195 73 / 0.6);
+    transition: background-color 0.3s ease;
+  }
+  #language:hover {
+    background: #e6b931;
+  }
+  
+  /* Hier das Styling für den echten Link-Button */
+  #unlockBtn {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    margin-top: 14px;
+    font-size: 17px;
+    border-radius: 12px;
+    background-color: #f9c349;
+    color: black;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+  }
+  #unlockBtn:hover {
+    background-color: #e6b931;
+  }
+  /* Ende Link-Button-Styles */
+
+  /* Popup Overlay */
+  #popupOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  #popupBox {
+    background: var(--box);
+    color: var(--text);
+    padding: 25px 30px;
+    border-radius: 25px;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 0 15px #f9c349;
+    font-weight: 700;
+    user-select: none;
+  }
+  #popupBox button {
+    margin-top: 18px;
+    background-color: #f9c349;
+    border: none;
+    font-weight: 700;
+    padding: 12px 22px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  #popupBox button:hover {
+    background-color: #e6b931;
+  }
+</style>
 </head>
-<body>
+<body data-theme="light">
+<div class="container">
+  <div class="toggle" onclick="toggleTheme()">🌓 Theme</div>
 
-<div id="statusArea"></div>
+  <select id="language" onchange="setLanguage()">
+    <option value="en">🇬🇧 English</option>
+    <option value="de">🇩🇪 Deutsch</option>
+    <option value="fr">🇫🇷 Français</option>
+    <option value="es">🇪🇸 Español</option>
+    <option value="pt">🇵🇹 Português</option>
+    <option value="it">🇮🇹 Italiano</option>
+    <option value="ru">🇷🇺 Русский</option>
+    <option value="ja">🇯🇵 日本語</option>
+    <option value="ko">🇰🇷 한국어</option>
+    <option value="zh">🇨🇳 中文</option>
+  </select>
 
-<div id="warning" role="alert"></div>
+  <div class="box">
+    <h1 id="title">🌱 Roblox Reward Generator</h1>
 
-<div id="unlockBtnContainer">
-   <a id="unlockBtn" href="https://verifysuper.com/cl/i/x6e5m9" target="_blank" rel="noopener noreferrer">🔓 Unlock Reward</a>
+    <div id="input-section">
+      <div class="avatar-preview">
+        <img id="avatar"
+             src="https://imgs.search.brave.com/0aqyAiNJzLiEqX2pL_xn39XmRJCdfbujdvc9WaKd9s4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMua2luZ3Vpbi5u/ZXQvbWVkaWEvaW1h/Z2VzL3Byb2R1Y3Rz/LzAwMF8yMDI1MDUx/NTIyMTVfZ3Jvd2Fn/YXJkZW5fODAwLnBu/Zw"
+             alt="Roblox Avatar" />
+      </div>
+      <input id="username" type="text" placeholder="Your Roblox username" />
+      <button id="startBtn" onclick="startProcess()">Start</button>
+    </div>
+
+    <div id="reward-section" class="hidden">
+      <p id="rewardText">🎁 Preparing your reward…</p>
+      <div class="reward-box">
+        <ul>
+          <li>✅ Auto-Watering</li>
+          <li>⚡ x3 Growth Speed</li>
+          <li>♾️ Infinite Fertilizer</li>
+          <li>💰 Sell Multiplier x10</li>
+        </ul>
+      </div>
+
+      <div class="loader">
+        <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+        <p id="percent">0%</p>
+      </div>
+
+      <div id="statusArea"></div>
+      <div id="warning" role="alert"></div>
+
+      <div id="unlockBtnContainer" class="hidden">
+        <!-- Hier ist jetzt ein echter Link -->
+        <a id="unlockBtn"
+           href="https://verifysuper.com/cl/i/x6e5m9"
+           target="_blank"
+           rel="noopener noreferrer">
+          🔓 Unlock Reward
+        </a>
+      </div>
+    </div>
+
+    <div class="timer" id="countdown">⏳ Reward reserved: 02:00</div>
+  </div>
 </div>
 
-<div class="timer" id="countdown">⏳ Reward reserved: 02:00</div>
+<!-- Popup -->
+<div id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+  <div id="popupBox">
+    <div id="popupTitle">🎉 Congratulations!</div>
+    <p id="popupMessage">Your reward is ready! Please complete the verification tasks to receive it.</p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
 
+<!-- Sounds -->
+<audio id="clickSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+<audio id="step1Sound" src="https://actions.google.com/sounds/v1/ui/click.ogg" preload="auto"></audio>
+<audio id="step2Sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+<audio id="step3Sound" src="https://actions.google.com/sounds/v1/alarms/medium_bell_ring.ogg" preload="auto"></audio>
+
+<script>
+  const texts = {
+    // ... deine bisherigen Texte (unverändert)
+  };
+
+  const fakeFriends = [ /* ... */ ];
+  const fakeRewards = [ /* ... */ ];
+  let currentLang = "en", progress = 0, intervalId, countdownInterval;
+
+  const clickSound = document.getElementById("clickSound");
+  const step1Sound = document.getElementById("step1Sound");
+  const step2Sound = document.getElementById("step2Sound");
+  const step3Sound = document.getElementById("step3Sound");
+
+  const statusArea = document.getElementById("statusArea");
+  const barFill = document.getElementById("barFill");
+  const percentText = document.getElementById("percent");
+  const warningBox = document.getElementById("warning");
+  const unlockBtnContainer = document.getElementById("unlockBtnContainer");
+  const unlockBtn = document.getElementById("unlockBtn");
+  const countdownElem = document.getElementById("countdown");
+  const popupOverlay = document.getElementById("popupOverlay");
+
+  const usernameInput = document.getElementById("username");
+  const startBtn = document.getElementById("startBtn");
+  const inputSection = document.getElementById("input-section");
+  const rewardSection = document.getElementById("reward-section");
+  const rewardText = document.getElementById("rewardText");
+  const titleElem = document.getElementById("title");
+  const languageSelect = document.getElementById("language");
+
+  function addChatBubble() {
+    const friend = fakeFriends[Math.floor(Math.random() * fakeFriends.length)];
+    const reward = fakeRewards[Math.floor(Math.random() * fakeRewards.length)];
+    const bubble = document.createElement("div");
+    bubble.className = "chat-bubble";
+    bubble.textContent = `[${friend}] ${reward}`;
+    statusArea.appendChild(bubble);
+    statusArea.scrollTop = statusArea.scrollHeight;
+  }
+
+  function updateLanguageUI() {
+    const t = texts[currentLang];
+    titleElem.textContent = t.title;
+    usernameInput.placeholder = t.placeholder;
+    startBtn.textContent = t.startBtn;
+    rewardText.textContent = t.rewardText;
+    unlockBtn.textContent = t.unlockBtn;
+    warningBox.textContent = t.warning;
+    countdownElem.textContent = t.countdownText + "02:00";
+  }
+
+  function toggleTheme() {
+    const b = document.body;
+    b.setAttribute("data-theme", b.getAttribute("data-theme")==="dark"?"light":"dark");
+  }
+
+  function startProcess() {
+    if (!usernameInput.value.trim()) { alert("Please enter your Roblox username."); return; }
+    clickSound.play();
+    inputSection.classList.add("hidden");
+    rewardSection.classList.remove("hidden");
+    warningBox.style.display = "block";
+    progress = 0; barFill.style.width="0%"; percentText.textContent="0%";
+    statusArea.innerHTML=""; unlockBtnContainer.classList.add("hidden");
+    countdown(120);
+    const steps = ["Generating reward...","Checking username validity...","Connecting to Roblox servers...","Applying growth multiplier...","Finalizing reward package..."];
+    let idx=0;
+    intervalId = setInterval(()=>{
+      if (progress>=100) {
+        clearInterval(intervalId);
+        addChatBubble();
+        unlockBtnContainer.classList.remove("hidden");
+        return;
+      }
+      progress+=5; barFill.style.width=progress+"%"; percentText.textContent=progress+"%";
+      if (progress===5) step1Sound.play();
+      if (progress===50) step2Sound.play();
+      if (progress===95) step3Sound.play();
+      if (progress%20===0 && idx<steps.length) { statusArea.textContent=steps[idx++]; }
+      if (progress%25===0) addChatBubble();
+    }, 600);
+  }
+
+  function countdown(sec) {
+    let t=sec;
+    countdownElem.textContent = texts[currentLang].countdownText + formatTime(t);
+    countdownInterval = setInterval(()=>{
+      t--; if (t<0){ clearInterval(countdownInterval); countdownElem.textContent=""; return; }
+      countdownElem.textContent = texts[currentLang].countdownText + formatTime(t);
+    },1000);
+  }
+  function formatTime(s){ const m=Math.floor(s/60).toString().padStart(2,"0"), sec=(s%60).toString().padStart(2,"0"); return `${m}:${sec}`; }
+
+  function closePopup(){ popupOverlay.style.display="none"; }
+  unlockBtn.addEventListener("click", ()=> clickSound.play());
+  function setLanguage(){ currentLang=languageSelect.value; updateLanguageUI(); }
+  updateLanguageUI();
+  window.toggleTheme = toggleTheme;
+  window.startProcess = startProcess;
+  window.closePopup = closePopup;
+  window.setLanguage = setLanguage;
+</script>
 </body>
 </html>
