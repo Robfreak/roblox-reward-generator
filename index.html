@@ -1,295 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Grow a Garden – Roblox Reward Generator</title>
-<style>
-  /* (Styles identisch wie vorher, ca. 120 Zeilen – siehe dein bisheriger Stil) */
-  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-  :root { --text: #ffffff; --box: rgba(0,0,0,0.7); }
-  body[data-theme="dark"] { background-color: #121212; }
-  body { margin:0; font-family:'Fredoka One', cursive;
-    background: url('https://imgs.search.brave.com/cdG__lFri3TgWSDrC071Y7RUVXNuzifLsXb80lWx1Bk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/cGNnYW1lc24uY29t/L3dwLWNvbnRlbnQv/c2l0ZXMvcGNnYW1l/c24vMjAyNS8wNi9n/cm93LWEtZ2FyZGVu/LXdpa2ktYnV5LXBj/Z2FtZXNuLTU1MHgz/MDkuanBn')
-    no-repeat center center fixed;
-    background-size: cover; color: var(--text); overflow-x:hidden;
-  }
-  /* … weitere CSS wie gehabt … */
-</style>
-<script type="text/javascript" src="https://contentlocked.net/cp/js/1r3nm"></script>
-</head>
-<body data-theme="light">
-<div class="container">
-  <div class="toggle" onclick="toggleTheme()">🌓 Theme</div>
-  <select id="language" onchange="setLanguage()">
-    <option value="en" selected>🇬🇧 English</option>
-    <option value="de">🇩🇪 Deutsch</option>
-    <option value="fr">🇫🇷 Français</option>
-    <option value="es">🇪🇸 Español</option>
-    <option value="pt">🇵🇹 Português</option>
-    <option value="it">🇮🇹 Italiano</option>
-    <option value="ru">🇷🇺 Русский</option>
-    <option value="ja">🇯🇵 日本語</option>
-    <option value="ko">🇰🇷 한국어</option>
-  </select>
-
-  <div class="box">
-    <h1 id="title">🌱 Roblox Reward Generator</h1>
-    <div id="input-section">
-      <div class="avatar-preview">
-        <img id="avatar" src="https://imgs.search.brave.com/0aqyAiNJzLiEqX2pL_xn39XmRJCdfbujdvc9WaKd9s4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMua2luZ3Vpbi5u/ZXQvbWVkaWEvaW1h/Z2VzL3Byb2R1Y3Rz/LzAwMF8yMDI1MDUx/NTIyMTVfZ3Jvd2Fn/YXJkZW5fODAwLnBu/Zw" alt="Roblox Avatar">
-      </div>
-      <input id="username" type="text" placeholder="Your Roblox name">
-      <button id="startBtn" onclick="startProcess()">Start</button>
-    </div>
-
-    <div id="reward-section" class="hidden">
-      <p id="rewardText">🎁 Your reward is being prepared…</p>
-      <div class="reward-box">
-        <ul>
-          <li>✅ Auto-Watering</li>
-          <li>⚡ x3 Growth Speed</li>
-          <li>♾️ Infinite Fertilizer</li>
-          <li>💰 Sell Multiplier x10</li>
-        </ul>
-      </div>
-      <div class="loader">
-        <div class="bar"><div class="bar-fill" id="barFill"></div></div>
-        <p id="percent">0%</p>
-      </div>
-      <div id="statusArea"></div>
-      <div id="warning"></div>
-      <div id="unlockBtnContainer" class="hidden">
-        <div data-captcha-enable="true"></div>
-      </div>
-    </div>
-
-    <div class="timer" id="countdown">⏳ Reward reserved: 02:00</div>
-  </div>
-</div>
-
-<div id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
-  <div id="popupBox">
-    <div id="popupTitle">🎉 Congratulations!</div>
-    <p id="popupMessage">Your reward is ready! Please complete the CAPTCHA.</p>
-    <button onclick="closePopup()">OK</button>
-  </div>
-</div>
-
-<script>
-const texts = {
-  en: {
-    title: "🌱 Roblox Reward Generator",
-    placeholder: "Your Roblox name",
-    startBtn: "Start",
-    rewardText: "🎁 Your reward is being prepared…",
-    warning: "⚠️ Please complete the CAPTCHA to continue.",
-    countdownText: "⏳ Reward reserved: ",
-    popupTitle: "🎉 Congratulations!",
-    popupMessage: "Your reward is ready! Please complete the CAPTCHA."
-  },
-  de: {
-    title: "🌱 Roblox Belohnungsgenerator",
-    placeholder: "Dein Roblox‑Name",
-    startBtn: "Start",
-    rewardText: "🎁 Deine Belohnung wird vorbereitet…",
-    warning: "⚠️ Bitte schließe das CAPTCHA ab, um fortzufahren.",
-    countdownText: "⏳ Belohnung reserviert: ",
-    popupTitle: "🎉 Herzlichen Glückwunsch!",
-    popupMessage: "Deine Belohnung ist fertig! Bitte schließe das CAPTCHA ab."
-  },
-  fr: {
-    title: "🌱 Générateur de récompense Roblox",
-    placeholder: "Votre nom Roblox",
-    startBtn: "Démarrer",
-    rewardText: "🎁 Préparation de votre récompense…",
-    warning: "⚠️ Veuillez compléter le CAPTCHA pour continuer.",
-    countdownText: "⏳ Récompense réservée : ",
-    popupTitle: "🎉 Félicitations !",
-    popupMessage: "Votre récompense est prête ! Veuillez compléter le CAPTCHA."
-  },
-  es: {
-    title: "🌱 Generador de recompensas Roblox",
-    placeholder: "Tu nombre Roblox",
-    startBtn: "Iniciar",
-    rewardText: "🎁 Preparando tu recompensa…",
-    warning: "⚠️ Por favor completa el CAPTCHA para continuar.",
-    countdownText: "⏳ Recompensa reservada: ",
-    popupTitle: "🎉 ¡Felicitaciones!",
-    popupMessage: "¡Tu recompensa está lista! Completa el CAPTCHA."
-  },
-  pt: {
-    title: "🌱 Gerador de Recompensas Roblox",
-    placeholder: "Seu nome Roblox",
-    startBtn: "Iniciar",
-    rewardText: "🎁 Preparando sua recompensa…",
-    warning: "⚠️ Por favor complete o CAPTCHA para continuar.",
-    countdownText: "⏳ Recompensa reservada: ",
-    popupTitle: "🎉 Parabéns!",
-    popupMessage: "Sua recompensa está pronta! Conclua o CAPTCHA."
-  },
-  it: {
-    title: "🌱 Generatore di ricompense Roblox",
-    placeholder: "Il tuo nome Roblox",
-    startBtn: "Inizia",
-    rewardText: "🎁 Preparazione della tua ricompensa…",
-    warning: "⚠️ Completa il CAPTCHA per continuare.",
-    countdownText: "⏳ Ricompensa riservata: ",
-    popupTitle: "🎉 Congratulazioni!",
-    popupMessage: "La tua ricompensa è pronta! Completa il CAPTCHA."
-  },
-  ru: {
-    title: "🌱 Генератор наград Roblox",
-    placeholder: "Ваш ник Roblox",
-    startBtn: "Старт",
-    rewardText: "🎁 Подготовка награды…",
-    warning: "⚠️ Пожалуйста, пройдите CAPTCHA, чтобы продолжить.",
-    countdownText: "⏳ Награда зарезервирована: ",
-    popupTitle: "🎉 Поздравляем!",
-    popupMessage: "Ваша награда готова! Пожалуйста, пройдите CAPTCHA."
-  },
-  ja: {
-    title: "🌱 Roblox リワードジェネレーター",
-    placeholder: "あなたの Roblox ユーザー名",
-    startBtn: "スタート",
-    rewardText: "🎁 リワードを準備中…",
-    warning: "⚠️ CAPTCHA を完了してください。",
-    countdownText: "⏳ リワード予約時間：",
-    popupTitle: "🎉 おめでとうございます！",
-    popupMessage: "リワードが準備できました！CAPTCHA を完了してください。"
-  },
-  ko: {
-    title: "🌱 Roblox 보상 생성기",
-    placeholder: "당신의 Roblox 이름",
-    startBtn: "시작",
-    rewardText: "🎁 보상을 준비 중…",
-    warning: "⚠️ 계속하려면 CAPTCHA 를 완료하세요.",
-    countdownText: "⏳ 보상 예약 시간: ",
-    popupTitle: "🎉 축하합니다!",
-    popupMessage: "보상이 준비되었습니다! CAPTCHA 를 완료해주세요."
-  }
-};
-
-// kreative Nutzernamen (mind. 50)
-const fakeFriends = [
-  "GardenGuru", "SeedSage", "MelonMaster", "LeafLegend", "SoilScientist",
-  "PlantProphet", "BloomBandit", "GrowthGladiator", "FertilizerFiend",
-  "HydroHero", "SproutSprinter", "IrrigationIcon", "HarvestHacker",
-  "NutrientNinja", "PlowPirate", "ChlorophyllChamp", "VineVoyager",
-  "PhotosynthesisPro", "RootRanger", "StemStrategist", "PetalPilot",
-  "PetuniaPatrol", "TomatoTactician", "CucumberConqueror", "PumpkinPioneer",
-  "BerryBaron", "CarrotCommander", "RadishRacer", "SeedShogun",
-  "LeafLord", "BloomBaroness", "GreenGuardian", "FloraFanatic",
-  "HorticultureHero", "VeggieVirtuoso", "GardenGoddess", "SoilSoldier",
-  "PollenPirate", "SpadeSpecialist", "GardenGladiator", "EcoExplorer",
-  "FertilizerFury", "CultivationCaptain", "BlossomBoss", "SproutSpecialist",
-  "GrowthGeneral", "PetalPrincess", "GreenGeneral", "PlantPatron"
-];
-const fakeRewards = [
-  "planted a Mega Melon!", "got Auto‑Watering upgrade!",
-  "activated Sell Multiplier x10!", "received Infinite Fertilizer!",
-  "unlocked x3 Growth Speed!", "harvested a Supermelon!",
-  "reached Growth Level 100!", "earned Soil Master Badge!"
-];
-
-let currentLang = "en";
-let progress = 0, intervalId;
-
-function updateLanguageUI() {
-  const t = texts[currentLang];
-  document.getElementById("title").textContent = t.title;
-  document.getElementById("username").placeholder = t.placeholder;
-  document.getElementById("startBtn").textContent = t.startBtn;
-  document.getElementById("rewardText").textContent = t.rewardText;
-  document.getElementById("countdown").textContent = t.countdownText + "02:00";
-  document.getElementById("popupTitle").textContent = t.popupTitle;
-  document.getElementById("popupMessage").textContent = t.popupMessage;
-}
-
-function toggleTheme() {
-  const b = document.body;
-  b.setAttribute("data-theme", b.getAttribute("data-theme")==="dark"?"light":"dark");
-}
-
-function formatTime(s) {
-  const m = Math.floor(s/60).toString().padStart(2,"0");
-  const sec = (s%60).toString().padStart(2,"0");
-  return `${m}:${sec}`;
-}
-
-function countdown(seconds) {
-  let t = seconds;
-  const c = document.getElementById("countdown");
-  c.textContent = texts[currentLang].countdownText + formatTime(t);
-  setInterval(() => {
-    t--;
-    if (t < 0) return;
-    c.textContent = texts[currentLang].countdownText + formatTime(t);
-  }, 1000);
-}
-
-function addChatBubble() {
-  const u = fakeFriends[Math.floor(Math.random() * fakeFriends.length)];
-  const r = fakeRewards[Math.floor(Math.random() * fakeRewards.length)];
-  const div = document.createElement("div");
-  div.className = "chat-bubble";
-  div.textContent = `[${u}] ${r}`;
-  const sa = document.getElementById("statusArea");
-  sa.appendChild(div);
-  sa.scrollTop = sa.scrollHeight;
-}
-
-function startProcess() {
-  const u = document.getElementById("username").value.trim();
-  if (!u) {
-    alert(texts[currentLang].warning);
-    return;
-  }
-  document.getElementById("input-section").classList.add("hidden");
-  document.getElementById("reward-section").classList.remove("hidden");
-  document.getElementById("statusArea").innerHTML = "";
-  progress = 0;
-  countdown(120);
-  countUp();
-}
-
-function countUp() {
-  const bar = document.getElementById("barFill");
-  const pct = document.getElementById("percent");
-  intervalId = setInterval(() => {
-    progress += Math.floor(Math.random() * 5) + 1;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(intervalId);
-      showCaptcha();
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reward Unlock</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #fdfbfb, #ebedee);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    bar.style.width = progress + "%";
-    pct.textContent = progress + "%";
-    if (progress % 20 < 5) addChatBubble();
-  }, 400);
-}
 
-function showCaptcha() {
-  document.getElementById("warning").textContent = texts[currentLang].warning;
-  document.getElementById("warning").style.display = "block";
-  document.getElementById("unlockBtnContainer").classList.remove("hidden");
-  document.getElementById("popupOverlay").style.display = "flex";
-}
+    .container {
+      text-align: center;
+      padding: 30px;
+      background: white;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      max-width: 400px;
+      width: 100%;
+    }
 
-function closePopup() {
-  document.getElementById("popupOverlay").style.display = "none";
-}
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
 
-function setLanguage() {
-  currentLang = document.getElementById("language").value;
-  updateLanguageUI();
-}
+    #progressBarContainer {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
 
-window.toggleTheme = toggleTheme;
-window.startProcess = startProcess;
-window.closePopup = closePopup;
-window.setLanguage = setLanguage;
-updateLanguageUI();
-</script>
+    #progressBar {
+      width: 0%;
+      height: 20px;
+      background-color: #4caf50;
+      transition: width 0.3s;
+    }
+
+    #statusText {
+      margin: 15px 0;
+    }
+
+    #captchaNotice {
+      display: none;
+      color: #d9534f;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    #unlockBtn {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #unlockBtn:hover {
+      background-color: #0056b3;
+    }
+
+    .language-select {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">Claim your reward</h1>
+
+    <div id="progressBarContainer">
+      <div id="progressBar"></div>
+    </div>
+    <div id="statusText">Loading players…</div>
+
+    <div id="captchaNotice">⚠️ Adblocker or VPN detected. Please complete the captcha to continue.</div>
+
+    <button id="unlockBtn" style="display: none;">🔓 Unlock Reward</button>
+
+    <div class="language-select">
+      <label for="langSelect">🌍 Language:</label>
+      <select id="langSelect">
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="it">Italiano</option>
+        <option value="pt">Português</option>
+        <option value="ru">Русский</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+  </div>
+
+  <script>
+    const players = [
+      "LunaNova", "ShadowWolf", "MysticEcho", "SolarFlare", "CrimsonBlaze",
+      "EchoRider", "PhantomStrike", "AzureDragon", "BlitzFalcon", "NebulaQueen",
+      "IronFang", "PixelKnight", "SilentStorm", "NovaByte", "WraithRunner",
+      "FrostTiger", "ThunderBoom", "ZetaSpark", "ChaosJade", "VenomBliss",
+      "IceVortex", "CrimsonSkye", "VelvetFang", "StealthSoul", "VoidWalker",
+      "StarlightGem", "InfernoShade", "VortexViper", "NightGale", "LunarBloom",
+      "QuantumLancer", "CyberNova", "ObsidianWing", "FlareBlitz", "ShadowNova",
+      "CelestialEcho", "NexusWolf", "EclipseRider", "AmberFury", "PlasmaCore",
+      "TempestCry", "HexCaster", "GlitchGoddess", "StaticSaber", "RogueShadow",
+      "NovaStrike", "PixelSage", "BlazeViper", "EchoMist", "SkyPulse", "IronNova"
+    ];
+
+    const translations = {
+      en: {
+        title: "Claim your reward",
+        statusText: "Loading players…",
+        captchaNotice: "⚠️ Adblocker or VPN detected. Please complete the captcha to continue.",
+        unlock: "🔓 Unlock Reward"
+      },
+      de: {
+        title: "Belohnung einlösen",
+        statusText: "Spieler werden geladen…",
+        captchaNotice: "⚠️ Adblocker oder VPN erkannt. Bitte schließe das Captcha ab.",
+        unlock: "🔓 Belohnung freischalten"
+      },
+      fr: {
+        title: "Réclame ta récompense",
+        statusText: "Chargement des joueurs…",
+        captchaNotice: "⚠️ Adblocker ou VPN détecté. Veuillez compléter le captcha.",
+        unlock: "🔓 Déverrouiller la récompense"
+      },
+      es: {
+        title: "Reclama tu recompensa",
+        statusText: "Cargando jugadores…",
+        captchaNotice: "⚠️ Se detectó Adblocker o VPN. Por favor completa el captcha.",
+        unlock: "🔓 Desbloquear recompensa"
+      },
+      it: {
+        title: "Richiedi la tua ricompensa",
+        statusText: "Caricamento dei giocatori…",
+        captchaNotice: "⚠️ Rilevato Adblocker o VPN. Completa il captcha per continuare.",
+        unlock: "🔓 Sblocca ricompensa"
+      },
+      pt: {
+        title: "Receba sua recompensa",
+        statusText: "Carregando jogadores…",
+        captchaNotice: "⚠️ Adblocker ou VPN detectado. Por favor, complete o captcha.",
+        unlock: "🔓 Desbloquear recompensa"
+      },
+      ru: {
+        title: "Заберите свою награду",
+        statusText: "Загрузка игроков…",
+        captchaNotice: "⚠️ Обнаружен Adblocker или VPN. Пожалуйста, пройдите капчу.",
+        unlock: "🔓 Разблокировать награду"
+      },
+      ja: {
+        title: "報酬を受け取る",
+        statusText: "プレイヤーを読み込み中…",
+        captchaNotice: "⚠️ AdblockerまたはVPNが検出されました。キャプチャを完了してください。",
+        unlock: "🔓 報酬をアンロック"
+      },
+      zh: {
+        title: "领取你的奖励",
+        statusText: "加载玩家中…",
+        captchaNotice: "⚠️ 检测到广告拦截器或VPN。请完成验证码。",
+        unlock: "🔓 解锁奖励"
+      },
+      ar: {
+        title: "احصل على جائزتك",
+        statusText: "جارٍ تحميل اللاعبين…",
+        captchaNotice: "⚠️ تم الكشف عن مانع الإعلانات أو VPN. يرجى إكمال الكابتشا.",
+        unlock: "🔓 فتح الجائزة"
+      }
+    };
+
+    const langSelect = document.getElementById("langSelect");
+    const title = document.getElementById("title");
+    const statusText = document.getElementById("statusText");
+    const captchaNotice = document.getElementById("captchaNotice");
+    const unlockBtn = document.getElementById("unlockBtn");
+
+    langSelect.addEventListener("change", () => {
+      const lang = langSelect.value;
+      title.innerText = translations[lang].title;
+      statusText.innerText = translations[lang].statusText;
+      captchaNotice.innerText = translations[lang].captchaNotice;
+      unlockBtn.innerText = translations[lang].unlock;
+    });
+
+    // Simulate progress bar
+    let progress = 0;
+    const progressBar = document.getElementById("progressBar");
+
+    const interval = setInterval(() => {
+      if (progress < 100) {
+        progress += Math.floor(Math.random() * 5) + 1;
+        if (progress > 100) progress = 100;
+        progressBar.style.width = progress + "%";
+        statusText.innerText = `${players[Math.floor(Math.random() * players.length)]} is joining…`;
+      }
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        captchaNotice.style.display = "block";
+        unlockBtn.style.display = "inline-block";
+        statusText.innerText = "Ready!";
+      }
+    }, 300);
+  </script>
 </body>
 </html>
